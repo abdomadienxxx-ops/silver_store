@@ -1,0 +1,113 @@
+{
+  "entities": {
+    "InventoryItem": {
+      "title": "InventoryItem",
+      "description": "A phone or accessory item in the inventory",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "model": { "type": "string" },
+        "price": { "type": "number" },
+        "stock": { "type": "number" },
+        "image": { "type": "string" },
+        "updatedBy": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "category", "price", "stock"]
+    },
+    "RepairItem": {
+      "title": "RepairItem",
+      "description": "A customer's phone or device being repaired",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "deviceModel": { "type": "string" },
+        "issueDescription": { "type": "string" },
+        "status": { "type": "string" },
+        "cost": { "type": "number" },
+        "assignedTo": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "customerName", "customerPhone", "deviceModel", "issueDescription", "status", "cost"]
+    },
+    "SaleItem": {
+      "title": "SaleItem",
+      "description": "An invoice or sale transaction in the shop",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerName": { "type": "string" },
+        "items": { "type": "array" },
+        "totalAmount": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "soldBy": { "type": "string" },
+        "soldAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "items", "totalAmount", "soldBy", "soldAt"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "A real-time message sent between store employees",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "text", "senderName", "senderId", "timestamp"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "A custom inventory category configured in shop settings",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "icon": { "type": "string" }
+      },
+      "required": ["name", "icon"]
+    },
+    "Employee": {
+      "title": "Employee",
+      "description": "An employee or technician working in the shop",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" }
+      },
+      "required": ["name"]
+    }
+  },
+  "firestore": {
+    "inventory/{itemId}": {
+      "schema": "InventoryItem",
+      "description": "Product directory of mobile phones, accessories, etc."
+    },
+    "repairs/{repairId}": {
+      "schema": "RepairItem",
+      "description": "Active phone repairs and servicing list"
+    },
+    "sales/{saleId}": {
+      "schema": "SaleItem",
+      "description": "Completed transactions and sales history"
+    },
+    "messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "Real-time communication and logging feed for current employees"
+    },
+    "categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Dynamic shop item categories"
+    },
+    "employees/{employeeId}": {
+      "schema": "Employee",
+      "description": "Authorized staff and technicians"
+    }
+  }
+}

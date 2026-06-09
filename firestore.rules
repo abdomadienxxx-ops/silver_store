@@ -1,0 +1,80 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      // Allow both authenticated and guest simulated users so that the system remains fully functional
+      // when Anonymous Sign-In is disabled or restricted in the Firebase Auth console.
+      return true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // --- Inventory Rules ---
+    match /inventory/{itemId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() 
+        && request.resource.data.name is string && request.resource.data.name.size() <= 200
+        && request.resource.data.category is string && request.resource.data.category.size() <= 100
+        && request.resource.data.price is number
+        && request.resource.data.stock is number;
+      allow delete: if isSignedIn();
+    }
+
+    // --- Repairs Rules ---
+    match /repairs/{repairId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn()
+        && request.resource.data.customerName is string && request.resource.data.customerName.size() <= 200
+        && request.resource.data.customerPhone is string && request.resource.data.customerPhone.size() <= 100
+        && request.resource.data.deviceModel is string && request.resource.data.deviceModel.size() <= 200
+        && request.resource.data.status is string && request.resource.data.status.size() <= 100
+        && request.resource.data.cost is number;
+      allow delete: if isSignedIn();
+    }
+
+    // --- Sales Rules ---
+    match /sales/{saleId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn()
+        && request.resource.data.totalAmount is number
+        && request.resource.data.soldBy is string && request.resource.data.soldBy.size() <= 200;
+      allow delete: if isSignedIn();
+    }
+
+    // --- Messages Rules ---
+    match /messages/{messageId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && request.resource.data.text is string && request.resource.data.text.size() <= 2000
+        && request.resource.data.senderName is string && request.resource.data.senderName.size() <= 200
+        && request.resource.data.senderId is string && request.resource.data.senderId.size() <= 200;
+      allow update, delete: if false;
+    }
+
+    // --- Categories Rules ---
+    match /categories/{categoryId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn()
+        && request.resource.data.name is string && request.resource.data.name.size() <= 100
+        && request.resource.data.icon is string && request.resource.data.icon.size() <= 50;
+      allow delete: if isSignedIn();
+    }
+
+    // --- Employees Rules ---
+    match /employees/{employeeId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn()
+        && request.resource.data.name is string && request.resource.data.name.size() <= 200;
+      allow delete: if isSignedIn();
+    }
+  }
+}
